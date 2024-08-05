@@ -2,53 +2,30 @@ package com.pettcare.plugins
 
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
-import io.ktor.server.application.*
-import io.ktor.server.auth.*
-import io.ktor.server.auth.jwt.*
-import io.ktor.server.response.*
-import io.ktor.server.routing.*
+import com.pettcare.auth.security.token.TokenConfig
+import io.ktor.server.application.Application
+import io.ktor.server.auth.authentication
+import io.ktor.server.auth.jwt.JWTPrincipal
+import io.ktor.server.auth.jwt.jwt
+import org.koin.ktor.ext.inject
 
 fun Application.configureSecurity() {
-    // Please read the jwt property from the config file if you are using EngineMain
-    val jwtAudience = "jwt-audience"
-    val jwtDomain = "https://jwt-provider-domain/"
-    val jwtRealm = "ktor sample app"
-    val jwtSecret = "secret"
+    val config by inject<TokenConfig>()
     authentication {
         jwt {
-            realm = jwtRealm
+            realm = this@configureSecurity.environment.config.property("jwt.realm").getString()
             verifier(
                 JWT
-                    .require(Algorithm.HMAC256(jwtSecret))
-                    .withAudience(jwtAudience)
-                    .withIssuer(jwtDomain)
+                    .require(Algorithm.HMAC256(config.secret))
+                    .withAudience(config.audience)
+                    .withIssuer(config.issuer)
                     .build()
             )
             validate { credential ->
-                if (credential.payload.audience.contains(jwtAudience)) JWTPrincipal(credential.payload) else null
+                if (credential.payload.audience.contains(config.audience)) {
+                    JWTPrincipal(credential.payload)
+                } else null
             }
         }
-    }
-    authentication {
-        basic(name = "myauth1") {
-            realm = "Ktor Server"
-            validate { credentials ->
-                if (credentials.name == credentials.password) {
-                    UserIdPrincipal(credentials.name)
-                } else {
-                    null
-                }
-            }
-        }
-    
-        form(name = "myauth2") {
-            userParamName = "user"
-            passwordParamName = "password"
-            challenge {
-                /**/
-            }
-        }
-    }
-    routing {
     }
 }
