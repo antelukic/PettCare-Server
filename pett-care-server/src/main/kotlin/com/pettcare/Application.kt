@@ -1,16 +1,19 @@
 package com.pettcare
 
+import com.pettcare.db.DatabaseFactory
 import com.pettcare.plugins.*
 import io.ktor.server.application.*
 
-fun main(args: Array<String>) {
-    io.ktor.server.cio.EngineMain.main(args)
-}
+fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
 
+@Suppress("unused")
 fun Application.module() {
+    DatabaseFactory.init(environment.config)
+    configureDependencyInjection()
     configureSerialization()
-    configureDatabases()
     configureMonitoring()
+    configureHTTP()
     configureSecurity()
     configureRouting()
+    configureCors()
 }
