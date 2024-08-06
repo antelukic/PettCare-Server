@@ -7,8 +7,28 @@ val exposed_version: String by project
 
 plugins {
     kotlin("jvm") version "2.0.0"
-    id("io.ktor.plugin") version "2.3.11"
+    id("io.ktor.plugin") version "2.2.4"
     id("org.jetbrains.kotlin.plugin.serialization") version "2.0.0"
+}
+
+ktor {
+    docker {
+        jreVersion.set(io.ktor.plugin.features.JreVersion.JRE_17)
+        localImageName.set("pettcare-image")
+        imageTag.set("0.0.1-preview")
+        portMappings.set(
+            listOf(
+                io.ktor.plugin.features.DockerPortMapping(
+                    8081,
+                    8080,
+                    io.ktor.plugin.features.DockerPortMappingProtocol.TCP
+                )
+            )
+        )
+    }
+    fatJar {
+        archiveFileName.set("fat.jar")
+    }
 }
 
 group = "com.pettcare"
@@ -39,6 +59,7 @@ dependencies {
     implementation("io.ktor:ktor-server-cors:2.2.4")
     implementation("ch.qos.logback:logback-classic:1.2.11")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:1.8.10")
+    implementation("io.ktor:ktor-server-cio:2.3.4")
 
     implementation("org.jetbrains.exposed:exposed-core:0.41.1")
     implementation("org.jetbrains.exposed:exposed-dao:0.41.1")
