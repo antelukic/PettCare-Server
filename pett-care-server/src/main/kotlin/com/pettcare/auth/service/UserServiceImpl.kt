@@ -32,9 +32,9 @@ class UserServiceImpl(
                 it[fullName] = param.fullName
                 it[avatar] = param.avatar
                 it[notificationToken] = EMPTY
-                it[userType] = param.userType
+                it[imageId] = param.imageId
                 it[dateOfBirth] = param.dateOfBirth
-                it[gender] = param.gender
+                it[gender] = param.gender.first().toString()
             }
         }
         return rowToUser(statement?.resultedValues?.first())
@@ -84,7 +84,7 @@ class UserServiceImpl(
             password = row[UserTable.password].toString(),
             salt = row[UserTable.salt].toString(),
             notificationToken = row[UserTable.notificationToken],
-            userType = row[UserTable.userType],
+            imageId = row[UserTable.imageId],
             dateOfBirth = row[UserTable.dateOfBirth],
             gender = row[UserTable.gender]
         )

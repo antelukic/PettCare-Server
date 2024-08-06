@@ -5,7 +5,7 @@ data class RegisterUser(
     val avatar: String,
     val email: String,
     val password: String,
-    val userType: Int,
     val dateOfBirth: String,
-    val gender: String
+    val gender: String,
+    val imageId: String,
 )

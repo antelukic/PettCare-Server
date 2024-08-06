@@ -9,7 +9,7 @@ data class User(
     val createdAt: String,
     val password: String,
     val salt: String,
-    val userType: Int,
+    val imageId: String,
     val dateOfBirth: String,
     val gender: String,
     val notificationToken: String

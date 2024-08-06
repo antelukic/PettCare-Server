@@ -24,6 +24,8 @@ object DatabaseFactory {
         val database = Database.connect(connectionPool)
         transaction(database) {
             SchemaUtils.create(UserTable)
+            SchemaUtils.create(SocialPostTable)
+            SchemaUtils.create(CarePostTable)
         }
     }
 
