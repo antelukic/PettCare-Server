@@ -8,6 +8,7 @@ import com.pettcare.post.repository.SocialPostRepository
 import com.pettcare.post.requests.CreateCarePostRequest
 import com.pettcare.post.requests.CreateSocialPostRequest
 import com.pettcare.post.requests.DeletePostRequest
+import com.pettcare.post.requests.LikePostRequest
 import io.ktor.server.application.Application
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.call
@@ -124,6 +125,16 @@ fun Route.getCarePostById(repository: CarePostRepository) {
     }
 }
 
+fun Route.likePost(repository: SocialPostRepository) {
+    authenticate {
+        post("/socialPost/like") {
+            val params = call.receive<LikePostRequest>()
+            val result = repository.likePost(params.id)
+            call.respond(result.statusCode, result)
+        }
+    }
+}
+
 
 fun Application.postRoutes() {
     val socialPostRepository by inject<SocialPostRepository>()
@@ -133,6 +144,7 @@ fun Application.postRoutes() {
         getPosts(socialPostRepository)
         createSocialPost(socialPostRepository)
         getPostById(socialPostRepository)
+        likePost(socialPostRepository)
 
         deleteCarePost(carePostRepository)
         getCarePostById(carePostRepository)

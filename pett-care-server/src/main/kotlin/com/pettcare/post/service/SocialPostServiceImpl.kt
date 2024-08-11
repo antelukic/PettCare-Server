@@ -14,6 +14,7 @@ import org.jetbrains.exposed.sql.or
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.statements.InsertStatement
+import org.jetbrains.exposed.sql.update
 
 class SocialPostServiceImpl: SocialPostService {
 
@@ -26,6 +27,7 @@ class SocialPostServiceImpl: SocialPostService {
                 it[photoUrl] = param.photoUrl.orEmpty()
                 it[creatorId] = param.creatorId
                 it[id] = userId()
+                it[numOfLikes] = 0
             }
         }
 
@@ -52,6 +54,24 @@ class SocialPostServiceImpl: SocialPostService {
         }
 
         return socialPost
+    }
+
+    override suspend fun likePost(id: String): Boolean {
+        var post: SocialPost?= null
+        var numOfRowsChanged: Int? = null
+        dbQuery {
+            post = SocialPostTable.select {
+                SocialPostTable.id eq id
+            }.firstOrNull().let(::rowToSocialPost)
+        }
+
+        dbQuery {
+            numOfRowsChanged = SocialPostTable.update({SocialPostTable.id eq id }){
+                it[numOfLikes] = (post?.numOfLikes ?: 0).inc()
+            }
+        }
+
+        return (numOfRowsChanged ?: 0) > 0
     }
 
     override suspend fun getPosts(userId: String?, limit: Int?, offset: Long?): List<SocialPost> {
@@ -84,6 +104,7 @@ class SocialPostServiceImpl: SocialPostService {
                 photoUrl = row[SocialPostTable.photoUrl],
                 photoId = row[SocialPostTable.photoId],
                 creatorId = row[SocialPostTable.creatorId],
+                numOfLikes = row[SocialPostTable.numOfLikes] ?: 0,
             )
         }
 

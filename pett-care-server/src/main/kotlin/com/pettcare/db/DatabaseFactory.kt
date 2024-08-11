@@ -8,6 +8,7 @@ import kotlinx.coroutines.withContext
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.transactions.transaction
+import org.postgresql.jdbc.EscapedFunctions.DATABASE
 
 object DatabaseFactory {
 
@@ -26,6 +27,7 @@ object DatabaseFactory {
             SchemaUtils.create(UserTable)
             SchemaUtils.create(SocialPostTable)
             SchemaUtils.create(CarePostTable)
+            SchemaUtils.create(CommentsTable)
         }
     }
 

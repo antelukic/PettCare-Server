@@ -9,6 +9,8 @@ interface SocialPostService {
 
     suspend fun getPostById(id: String): SocialPost?
 
+    suspend fun likePost(id: String): Boolean
+
     suspend fun getPosts(userId: String?, limit: Int?, offset: Long?): List<SocialPost>
 
     suspend fun deletePost(postId: String): Boolean

@@ -9,6 +9,8 @@ interface SocialPostRepository {
 
     suspend fun getPostById(id: String): BaseResponse<Any>
 
+    suspend fun likePost(id: String): BaseResponse<out Any>
+
     suspend fun getPosts(userId: String?, limit: Int?, offset: Long?): BaseResponse<Any>
 
     suspend fun deletePost(id: String): BaseResponse<Any>

@@ -49,6 +49,22 @@ class SocialPostRepositoryImpl(
         )
     }
 
+    override suspend fun likePost(id: String): BaseResponse<out Any> = kotlin.runCatching {
+        val isLikedSuccessfully = socialPostService.likePost(id)
+        return@runCatching if(isLikedSuccessfully) {
+            BaseResponse.SuccessResponse(
+                data = true
+            )
+        } else {
+            BaseResponse.ErrorResponse(
+                message = "Could not find post in the database"
+            )
+        }
+    }.getOrElse {
+        it.printStackTrace()
+        BaseResponse.ErrorResponse(it.message.toString())
+    }
+
     override suspend fun getPostById(id: String): BaseResponse<Any> = runCatching {
         val socialPost = socialPostService.getPostById(id)
 
