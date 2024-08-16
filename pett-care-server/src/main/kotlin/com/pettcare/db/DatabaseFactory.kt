@@ -28,6 +28,8 @@ object DatabaseFactory {
             SchemaUtils.create(SocialPostTable)
             SchemaUtils.create(CarePostTable)
             SchemaUtils.create(CommentsTable)
+            SchemaUtils.create(MessagesTable)
+            SchemaUtils.create(ChatsTable)
         }
     }
 

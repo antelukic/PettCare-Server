@@ -7,4 +7,5 @@ data class SocialPost(
     val photoId: String?,
     val creatorId: String,
     val numOfLikes: Int,
+    val createdAt: String,
 )

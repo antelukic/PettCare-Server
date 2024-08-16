@@ -4,11 +4,11 @@ import java.time.LocalDateTime
 import org.jetbrains.exposed.sql.Table
 import org.jetbrains.exposed.sql.javatime.datetime
 
-object CommentsTable : Table("comments_table") {
+object MessagesTable: Table("messages") {
     val id = char("id", 36)
-    val postId = char("post_id", 36)
-    val creatorId = char("creator_id", 36).references(UserTable.id)
+    val senderId = char("sender_id", 36).references(UserTable.id)
     val text = text("text")
+    val chatId = char("chat_id", 36).references(ChatsTable.id)
     val createdAt = datetime("created_at").clientDefault { LocalDateTime.now() }
-    override val primaryKey = PrimaryKey(id)
+    override val primaryKey = PrimaryKey(UserTable.id)
 }

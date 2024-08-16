@@ -2,10 +2,9 @@ package com.pettcare.comments.service
 
 import com.pettcare.comments.models.Comment
 import com.pettcare.comments.requests.CreateCommentRequest
-import com.pettcare.db.CarePostTable
 import com.pettcare.db.CommentsTable
 import com.pettcare.db.DatabaseFactory
-import com.pettcare.post.models.CarePost
+import com.pettcare.db.UserTable
 import java.util.*
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.insert
@@ -20,7 +19,7 @@ class CommentsServiceImpl: CommentsService {
         DatabaseFactory.dbQuery {
             comments = CommentsTable.select {
                 CommentsTable.postId eq id
-            }.mapNotNull(::rowToComment)
+            }.sortedBy { it[UserTable.createdAt] }.mapNotNull(::rowToComment)
         }
 
         return comments
@@ -46,7 +45,8 @@ class CommentsServiceImpl: CommentsService {
                 id = row[CommentsTable.id],
                 userId = row[CommentsTable.creatorId],
                 postId = row[CommentsTable.postId],
-                text = row[CommentsTable.text]
+                text = row[CommentsTable.text],
+                createdAt = row[CommentsTable.createdAt].toString(),
             )
         }
 }

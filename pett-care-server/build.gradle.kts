@@ -48,6 +48,8 @@ repositories {
 dependencies {
     implementation("org.postgresql:postgresql:42.5.1")
     implementation("io.ktor:ktor-server-core-jvm:2.2.4")
+    implementation("io.ktor:ktor-server-websockets:2.2.4")
+    implementation("io.ktor:ktor-server-sessions:2.2.4")
     implementation("io.ktor:ktor-serialization-jackson:2.2.4")
     implementation("io.ktor:ktor-server-content-negotiation-jvm:2.2.4")
     implementation("io.ktor:ktor-server-call-logging-jvm:2.2.4")

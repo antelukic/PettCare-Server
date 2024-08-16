@@ -10,4 +10,5 @@ data class CarePost(
     val photoUrl: String?,
     val photoId: String?,
     val creatorId: String,
+    val createdAt: String,
 )

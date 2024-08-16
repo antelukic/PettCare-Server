@@ -7,16 +7,14 @@ import com.pettcare.post.requests.CreateSocialPostRequest
 import java.util.*
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
-import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.insert
-import org.jetbrains.exposed.sql.or
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.statements.InsertStatement
 import org.jetbrains.exposed.sql.update
 
-class SocialPostServiceImpl: SocialPostService {
+class SocialPostServiceImpl : SocialPostService {
 
     override suspend fun createPost(param: CreateSocialPostRequest): SocialPost? {
         var statement: InsertStatement<Number>? = null
@@ -38,7 +36,7 @@ class SocialPostServiceImpl: SocialPostService {
         var numberOfDeletedRows: Int? = null
 
         dbQuery {
-            numberOfDeletedRows = SocialPostTable.deleteWhere { id eq postId}
+            numberOfDeletedRows = SocialPostTable.deleteWhere { id eq postId }
         }
 
         return numberOfDeletedRows == 1
@@ -57,7 +55,7 @@ class SocialPostServiceImpl: SocialPostService {
     }
 
     override suspend fun likePost(id: String): Boolean {
-        var post: SocialPost?= null
+        var post: SocialPost? = null
         var numOfRowsChanged: Int? = null
         dbQuery {
             post = SocialPostTable.select {
@@ -66,7 +64,7 @@ class SocialPostServiceImpl: SocialPostService {
         }
 
         dbQuery {
-            numOfRowsChanged = SocialPostTable.update({SocialPostTable.id eq id }){
+            numOfRowsChanged = SocialPostTable.update({ SocialPostTable.id eq id }) {
                 it[numOfLikes] = (post?.numOfLikes ?: 0).inc()
             }
         }
@@ -78,19 +76,19 @@ class SocialPostServiceImpl: SocialPostService {
         var posts: List<SocialPost?>? = null
 
         dbQuery {
-            posts = if(userId != null) {
+            posts = if (userId != null) {
                 SocialPostTable.select {
                     (SocialPostTable.creatorId eq userId)
                 }.limit(
                     n = limit ?: 0,
                     offset = offset ?: 0L
-                ).map(::rowToSocialPost)
+                ).sortedBy { it[SocialPostTable.createdAt] }.map(::rowToSocialPost)
             } else {
                 SocialPostTable.selectAll()
                     .limit(
                         n = limit ?: 0,
                         offset = offset ?: 0L
-                    ).map(::rowToSocialPost)
+                    ).sortedBy { it[SocialPostTable.createdAt] }.map(::rowToSocialPost)
             }
         }
         return posts?.filterNotNull() ?: emptyList()
@@ -99,12 +97,13 @@ class SocialPostServiceImpl: SocialPostService {
     private fun rowToSocialPost(row: ResultRow?): SocialPost? =
         row?.let {
             SocialPost(
-                text= row[SocialPostTable.text],
+                text = row[SocialPostTable.text],
                 id = row[SocialPostTable.id],
                 photoUrl = row[SocialPostTable.photoUrl],
                 photoId = row[SocialPostTable.photoId],
                 creatorId = row[SocialPostTable.creatorId],
                 numOfLikes = row[SocialPostTable.numOfLikes] ?: 0,
+                createdAt = row[SocialPostTable.createdAt].toString()
             )
         }
 

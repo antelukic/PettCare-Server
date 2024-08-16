@@ -2,7 +2,6 @@ package com.pettcare.post.service
 
 import com.pettcare.db.CarePostTable
 import com.pettcare.db.DatabaseFactory
-import com.pettcare.db.SocialPostTable
 import com.pettcare.post.models.CarePost
 import com.pettcare.post.requests.CreateCarePostRequest
 import java.util.*
@@ -14,7 +13,7 @@ import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.statements.InsertStatement
 
-class CarePostServiceImpl: CarePostService {
+class CarePostServiceImpl : CarePostService {
 
     override suspend fun createPost(param: CreateCarePostRequest): CarePost? {
         var statement: InsertStatement<Number>? = null
@@ -67,13 +66,13 @@ class CarePostServiceImpl: CarePostService {
                 }.limit(
                     n = limit ?: 0,
                     offset = offset ?: 0L
-                ).map(::rowToCarePost)
+                ).sortedBy { it[CarePostTable.createdAt] }.map(::rowToCarePost)
             } else {
                 CarePostTable.selectAll()
                     .limit(
                         n = limit ?: 0,
                         offset = offset ?: 0L
-                    ).map(::rowToCarePost)
+                    ).sortedBy { it[CarePostTable.createdAt] }.map(::rowToCarePost)
             }
         }
         return posts?.filterNotNull() ?: emptyList()
@@ -90,7 +89,8 @@ class CarePostServiceImpl: CarePostService {
                 lat = row[CarePostTable.latitude],
                 lon = row[CarePostTable.longitude],
                 address = row[CarePostTable.address],
-                price = row[CarePostTable.price]
+                price = row[CarePostTable.price],
+                createdAt = row[CarePostTable.createdAt].toString()
             )
         }
 
