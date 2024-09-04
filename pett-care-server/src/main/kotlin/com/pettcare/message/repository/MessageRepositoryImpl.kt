@@ -4,8 +4,7 @@ import com.pettcare.core.BaseResponse
 import com.pettcare.core.BaseResponse.ErrorResponse
 import com.pettcare.message.request.SendMessageRequest
 import com.pettcare.message.service.MessageService
-import io.ktor.websocket.WebSocketSession
-import io.ktor.websocket.close
+import io.ktor.websocket.*
 
 class MessageRepositoryImpl(private val service: MessageService): MessageRepository {
 
@@ -13,6 +12,7 @@ class MessageRepositoryImpl(private val service: MessageService): MessageReposit
         kotlin.runCatching {
             val response = service.insertMessage(message)
             if(response != null) {
+                socketSession.send(Frame.Text(message.text))
                 BaseResponse.SuccessResponse(response)
             } else {
                 ErrorResponse(message = "Unable to reach database")

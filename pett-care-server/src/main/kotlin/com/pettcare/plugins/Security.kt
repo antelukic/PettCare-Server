@@ -4,6 +4,7 @@ import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
 import com.pettcare.ChatSession
 import com.pettcare.auth.security.token.TokenConfig
+import com.pettcare.db.MessagesTable.senderId
 import io.ktor.server.application.Application
 import io.ktor.server.application.ApplicationCallPipeline
 import io.ktor.server.application.call
@@ -45,8 +46,8 @@ fun Application.configureSecurity() {
     intercept(ApplicationCallPipeline.Features) {
         if(call.sessions.get<ChatSession>() == null) {
             val chatId = call.parameters["chatId"].orEmpty()
-            val senderId = call.parameters["senderId"].orEmpty()
-            call.sessions.set(ChatSession(senderId, chatId))
+            val userId = call.parameters["userId"].orEmpty()
+            call.sessions.set(ChatSession(userId, chatId))
         }
     }
 }
