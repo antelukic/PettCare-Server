@@ -50,9 +50,9 @@ fun Route.sendMessage(repository: MessageRepository) {
                     repository.sendMessage(
                         this,
                         SendMessageRequest(
-                            senderId = session?.userId.orEmpty(),
+                            senderId = session?.userId ?: "TEST",
                             text = frame.readText(),
-                            chatId = session?.chatId.orEmpty()
+                            chatId = session?.chatId ?: "TEST"
                         )
                     )
                 }
